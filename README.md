@@ -1,2 +1,2 @@
-# ng-cli-plugins
+# ngx-build-plugins
 Extend Angular CLI Build Configuration
