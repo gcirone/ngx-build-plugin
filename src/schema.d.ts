@@ -10,7 +10,7 @@ export type BuilderSchema = BrowserBuilderSchema | BuildWebpackServerSchema;
 export interface Plugin {
   config?(webpackConfig: object): object;
   pre?(builderConfig: BuilderConfiguration<BuilderSchema>): void;
-  post?(builderConfig: BuilderConfiguration<BuilderSchema>): void
+  post?(builderConfig: BuilderConfiguration<BuilderSchema>): void;
 }
 
 export type PluginHook = 'pre' | 'post' | 'config';

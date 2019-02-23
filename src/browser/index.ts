@@ -12,13 +12,16 @@ export class PluginBrowserBuilder extends BrowserBuilder {
     BuildPlugin.setPlugin(this.context.workspace.root, builderConfig.options);
     BuildPlugin.runHook('pre', builderConfig);
 
-    return super.run(builderConfig).pipe(
-      tap(() => BuildPlugin.runHook('post', builderConfig))
-    );
+    return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook('post', builderConfig)));
   }
 
-  buildWebpackConfig(root: Path, projectRoot: Path, host: virtualFs.Host<Stats>, options: NormalizedPluginBrowserBuilderSchema) {
-    let config = super.buildWebpackConfig(root, projectRoot, host, options);
+  buildWebpackConfig(
+    root: Path,
+    projectRoot: Path,
+    host: virtualFs.Host<Stats>,
+    options: NormalizedPluginBrowserBuilderSchema
+  ) {
+    const config = super.buildWebpackConfig(root, projectRoot, host, options);
     return BuildPlugin.runHook('config', config) || config;
   }
 }

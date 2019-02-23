@@ -1,3 +1,3 @@
-#Ngx Build Plugin
+# Ngx Build Plugin
 
 Hook Angular CLI build configuration 
