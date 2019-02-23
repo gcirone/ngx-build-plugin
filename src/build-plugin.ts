@@ -5,7 +5,7 @@ import { resolve } from 'path';
 export class BuildPlugin {
   private static plugin: Plugin;
 
-  static setPlugin(root: Path, options: PluginBuilderSchema) {
+  static loadPlugin(root: Path, options: PluginBuilderSchema) {
     if (options.plugin) {
       const pluginPath = resolve(getSystemPath(root), options.plugin);
       BuildPlugin.plugin = require(pluginPath);

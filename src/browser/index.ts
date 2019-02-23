@@ -9,7 +9,7 @@ import { Stats } from 'fs';
 
 export class PluginBrowserBuilder extends BrowserBuilder {
   run(builderConfig: BuilderConfiguration<NormalizedPluginBrowserBuilderSchema>): Observable<BuildEvent> {
-    BuildPlugin.setPlugin(this.context.workspace.root, builderConfig.options);
+    BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
     BuildPlugin.runHook('pre', builderConfig);
 
     return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook('post', builderConfig)));
@@ -21,8 +21,8 @@ export class PluginBrowserBuilder extends BrowserBuilder {
     host: virtualFs.Host<Stats>,
     options: NormalizedPluginBrowserBuilderSchema
   ) {
-    const config = super.buildWebpackConfig(root, projectRoot, host, options);
-    return BuildPlugin.runHook('config', config) || config;
+    const webpackConfig = super.buildWebpackConfig(root, projectRoot, host, options);
+    return BuildPlugin.runHook('config', webpackConfig) || webpackConfig;
   }
 }
 
