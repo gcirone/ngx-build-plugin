@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/gcirone-site
+    docker:
+      - image: circleci/node:8.13.0
+    steps:
+      - checkout
+      - run: ls -a
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
