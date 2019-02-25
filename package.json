@@ -1,6 +1,6 @@
 {
-  "name": "ngx-build-plugin",
-  "version": "0.0.1",
+  "name": "ngx-build-plugin1",
+  "version": "0.0.6",
   "description": "Extend Angular CLI Build Configuration",
   "main": "index.js",
   "types": "index.d.ts",
@@ -17,11 +17,13 @@
     "build:clean": "rm -rf build/*",
     "tsc": "tsc -p tsconfig.json",
     "tsc:watch": "tsc -p tsconfig.json --watch",
-    "copy": "cp package.json build && cpx 'src/**/*.{json,d.ts}' build",
-    "copy:watch": "cp package.json build && cpx 'src/**/*.{json,d.ts}' build --watch --verbose",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "prettier": "prettier --write 'src/**/*.ts'",
-    "precommit": "run-s prettier lint"
+    "copy": "cp package.json build && cp README.md build && cp LICENSE build && cpx \"src/**/*.{json,d.ts}\" build",
+    "copy:watch": "cp package.json build && cp README.md build && cp LICENSE build && cpx \"src/**/*.{json,d.ts}\" build --watch --verbose",
+    "lint": "tslint -c tslint.json \"src/**/*.ts\"",
+    "prettier": "prettier --write \"src/**/*.ts\"",
+    "test": "echo \"Running tests for version $npm_package_version...\"",
+    "release": "yarn version && cp package.json build",
+    "release2": "yarn version && cp package.json build && git push --tags"
   },
   "dependencies": {
     "@schematics/angular": "7.2.4"
@@ -44,7 +46,12 @@
     "rxjs": "6.3.3",
     "tslint": "5.12.1",
     "tslint-config-airbnb": "5.11.1",
-    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-prettier": "1.18.0",
     "typescript": "3.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "run-s prettier lint"
+    }
   }
 }

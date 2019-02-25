@@ -1,15 +1,68 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+executors:
+  node-executor:
     working_directory: ~/gcirone-site
     docker:
-      - image: circleci/node:8.13.0
+      - image: circleci/node:8.15.0
+
+jobs:
+  build:
+    executor: node-executor
     steps:
       - checkout
-      - run: ls -a
+      - restore_cache:
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - ./node_modules
+      - run:
+          name: Build Package
+          command: yarn build
+      - persist_to_workspace:
+          root: ~/gcirone-site
+          paths: .
+  test:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/gcirone-site
+      - run:
+          name: Test Package
+          command: yarn test
+  deploy:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/gcirone-site
+      - run:
+          name: Authenticate With Registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: Publish Package
+          command: npm publish build --access public
 
 workflows:
-  version: 2
-  build_and_test:
+  version: 2.1
+  build-test-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: master
+      - test:
+         requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+
