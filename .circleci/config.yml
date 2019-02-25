@@ -16,7 +16,7 @@ jobs:
             - yarn-workspace-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn install --no-progress --frozen-lockfile
       - save_cache:
           key: yarn-workspace-{{ checksum "yarn.lock" }}
           paths:
