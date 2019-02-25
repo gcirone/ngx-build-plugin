@@ -21,7 +21,7 @@ jobs:
           key: yarn-workspace-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-            - node_modules
+            - ./node_modules
       - run:
           name: Build Package
           command: yarn build
@@ -38,11 +38,9 @@ jobs:
           name: Test Package
           command: yarn test
       - store_test_results:
-          path: build/test-results
-      - save_cache:
-          key: yarn-workspace-{{ checksum "yarn.lock" }}
-          paths:
-            - build/.jest-cache
+          path: ./build/test-results
+      - store_artifacts:
+          path: ./build/test-results
 
   deploy:
     executor: ngx-build-plugin
@@ -54,7 +52,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish Package
-          command: npm publish build/package --access public
+          command: npm publish ./build/package --access public
 
 workflows:
   version: 2

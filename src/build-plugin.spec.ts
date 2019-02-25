@@ -31,14 +31,14 @@ describe('BuildPlugin Test', () => {
   describe('#runHook', () => {
     const data = { sample: true };
 
-    it('should return the value if the hook method is set up', () => {
+    it('should return the value if the hook method exist', () => {
       BuildPlugin.loadPlugin(root as any, options);
 
       const hookReturnValue = BuildPlugin.runHook('pre', data);
       expect(hookReturnValue).toEqual(data);
     });
 
-    it('should return undefined if the hook method is not set up', () => {
+    it('should return undefined if the hook method not exist', () => {
       const hookReturnValue = BuildPlugin.runHook('post', data);
       expect(hookReturnValue).toBeUndefined();
     });
