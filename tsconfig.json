@@ -1,8 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build",
+    "baseUrl": "src",
+    "outDir": "build/package",
     "sourceMap": true,
     "inlineSources": true,
     "declaration": true,
@@ -14,9 +14,20 @@
     "importHelpers": true,
     "skipLibCheck": true,
     "pretty": true,
-    "typeRoots": ["node_modules/@types"],
-    "types": ["node"],
-    "lib": ["es2017", "dom"]
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ]
   },
-  "exclude": ["node_modules", "build"]
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }

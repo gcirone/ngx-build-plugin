@@ -1,14 +1,14 @@
 version: 2.1
 
 executors:
-  node-executor:
-    working_directory: ~/gcirone-site
+  ngx-build-plugin:
+    working_directory: ~/ngx-build-plugin
     docker:
       - image: circleci/node:8.15.0
 
 jobs:
   build:
-    executor: node-executor
+    executor: ngx-build-plugin
     steps:
       - checkout
       - restore_cache:
@@ -21,48 +21,65 @@ jobs:
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-            - ./node_modules
+            - node_modules
       - run:
           name: Build Package
           command: yarn build
       - persist_to_workspace:
-          root: ~/gcirone-site
+          root: ~/ngx-build-plugin
           paths: .
+
   test:
-    executor: node-executor
+    executor: ngx-build-plugin
     steps:
       - attach_workspace:
-          at: ~/gcirone-site
+          at: ~/ngx-build-plugin
       - run:
           name: Test Package
           command: yarn test
+      - store_test_results:
+          path: build/test-results
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - build/.jest-cache
+
   deploy:
-    executor: node-executor
+    executor: ngx-build-plugin
     steps:
       - attach_workspace:
-          at: ~/gcirone-site
+          at: ~/ngx-build-plugin
       - run:
           name: Authenticate With Registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish Package
-          command: npm publish build --access public
+          command: npm publish build/package --access public
 
 workflows:
-  version: 2.1
+  version: 2
+
+  build-test:
+    jobs:
+      - build:
+          filters:
+            tags:
+              ignore: /^v.*/
+            branches:
+              only: master
+      - test:
+          requires:
+            - build
+
   build-test-deploy:
     jobs:
       - build:
           filters:
-            branches:
-              only: master
+            tags:
+              only: /^v.*/
       - test:
-         requires:
+          requires:
             - build
       - deploy:
           requires:
             - test
-          filters:
-            tags:
-              only: /^v.*/
-

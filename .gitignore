@@ -1,7 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-*.js
 /dist
 /build
 /tmp
@@ -28,6 +27,7 @@
 
 # misc
 /.sass-cache
+/.jest-cache
 /connect.lock
 /coverage
 /libpeerconnection.log
