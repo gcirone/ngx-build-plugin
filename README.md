@@ -2,10 +2,13 @@
 
 <p align="left">
   <a href="https://circleci.com/gh/gcirone/ngx-build-plugin">
+    <img src="https://img.shields.io/npm/v/ngx-build-plugin.svg?style=flat-square" alt="CircleCI Build Status">
+  </a>
+  <a href="https://circleci.com/gh/gcirone/ngx-build-plugin">
     <img src="https://circleci.com/gh/gcirone/ngx-build-plugin.svg?style=shield" alt="CircleCI Build Status">
   </a>
   <a href="https://github.com/facebook/jest">
-    <img src="https://img.shields.io/badge/tested_with-jest-99424f.svg" alt="Jest">
+    <img src="https://img.shields.io/badge/tested_with-jest-99424f.svg?style=flat-square" alt="Jest">
   </a>
   <a href="https://codecov.io/gh/gcirone/ngx-build-plugin">
     <img src="https://codecov.io/gh/gcirone/ngx-build-plugin/branch/master/graph/badge.svg" alt="Codecov" />
@@ -86,7 +89,7 @@ module.exports = {
 
 A few examples that show the `ng-build-plugin` usages:
 
-#### Change build progress plugin
+### Change build progress plugin
 
 Use a progress bar plugin for webpack ([progress-bar-webpack-plugin](https://www.npmjs.com/package/progress-bar-webpack-plugin)).
 
@@ -110,7 +113,7 @@ To execute this plugin check the [usage](#usage) above.
 
 *Note: no webpack merge plugin used just plugin instance replace.*
 
-#### Use custom webpack merge strategy
+### Use custom webpack merge strategy
 
 It's possible to use [webpack-merge](https://www.npmjs.com/package/webpack-merge) with different strategy based on your specific use case:
 
@@ -147,7 +150,7 @@ To execute this plugin check the [usage](#usage) above.
 
 Thank you for contributions!
 
-#### Feature Implementing
+### Feature Implementing
 
 Please use GitHub Pull Requests.
 
@@ -157,7 +160,7 @@ There are some scripts to help developments.
 - `yarn build:watch` - Watch for files changes and rebuild package directory.
 - `yarn build:clean` - Delete directories which are created by other commands.
 - `yarn test` - Run tests and collect coverage (html report in *build/coverage*).
-- `yarn test:watch` - Run tests  when each file was modified.
+- `yarn test:watch` - Run tests when each file was modified.
 - `yarn lint` - Run TSLint.
 - `yarn prettier` - Run Prettier.
 
