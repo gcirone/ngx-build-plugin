@@ -48,7 +48,8 @@ describe('PluginBrowserBuilder Test', () => {
   describe('#buildWebpackConfig', () => {
     const configHookReturnValue = { hook: true };
     beforeEach(() => {
-      jest.spyOn(BuildPlugin, 'runHook')
+      jest
+        .spyOn(BuildPlugin, 'runHook')
         .mockReturnValueOnce(configHookReturnValue)
         .mockReturnValueOnce(undefined);
     });
