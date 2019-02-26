@@ -6,6 +6,9 @@ executors:
     docker:
       - image: circleci/node:8.15.0
 
+orbs:
+  codecov: codecov/codecov@1.0.4
+
 jobs:
   build:
     executor: build-executor
@@ -41,6 +44,8 @@ jobs:
           path: ./build/test-results
       - store_artifacts:
           path: ./build/test-results
+      - codecov/upload:
+          file: ./build/coverage/lcov.info
 
   deploy:
     executor: build-executor
