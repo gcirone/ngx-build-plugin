@@ -1,6 +1,6 @@
 {
   "name": "ngx-build-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Extend Angular CLI build configuration",
   "main": "index.js",
   "types": "index.d.ts",
