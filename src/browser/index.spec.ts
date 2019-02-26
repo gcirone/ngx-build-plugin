@@ -8,46 +8,59 @@ jest.mock('../build-plugin');
 describe('PluginBrowserBuilder Test', () => {
   let pluginBrowserBuilder: PluginBrowserBuilder;
 
-  const context: any = { workspace: { root: 'root' } };
+  const root: any = 'root';
+  const plugin = 'folder/file.plugin.js';
+  const context: any = { workspace: { root } };
   const config: any = {
-    root: 'root',
+    root,
     projectType: 'application',
-    builder: '',
-    options: {
-      plugin: 'folder/file.plugin.js'
-    }
+    builder: 'ngx-build-plugin:browser',
+    options: { plugin }
   };
 
   beforeEach(() => {
     jest.spyOn(BrowserBuilder.prototype, 'run').mockReturnValue(of({ success: true }));
-    jest.spyOn(BuildPlugin, 'loadPlugin').mockReset();
-    jest.spyOn(BuildPlugin, 'runHook').mockReset();
-
+    jest.spyOn(BrowserBuilder.prototype, 'buildWebpackConfig').mockReturnValue({ parent: true });
     pluginBrowserBuilder = new PluginBrowserBuilder(context);
   });
 
   describe('#run', () => {
-    beforeEach(() => pluginBrowserBuilder.run(config).subscribe());
+    beforeEach(() => {
+      jest.spyOn(BuildPlugin, 'loadPlugin').mockReset();
+      jest.spyOn(BuildPlugin, 'runHook').mockReset();
+      pluginBrowserBuilder.run(config).subscribe();
+    });
 
     it('should load the plugin', () => {
       expect(BuildPlugin.loadPlugin).toHaveBeenLastCalledWith(config.root, config.options);
     });
 
-    it('should run the "pre" plugin hook', () => {
+    it('should run the "pre" plugin hook before the super run is called', () => {
       expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(1, 'pre', config);
     });
 
-    it('should run the "post" plugin hook', () => {
+    it('should run the "post" plugin hook after the super run is called', () => {
       expect(BuildPlugin.runHook).toHaveBeenCalledTimes(2);
       expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(2, 'post', config);
     });
   });
 
-  it('should be true2', () => {
-    console.log('pluginBrowserBuilder');
-    pluginBrowserBuilder.run(config);
+  describe('#buildWebpackConfig', () => {
+    const configHookReturnValue = { hook: true };
+    beforeEach(() => {
+      jest.spyOn(BuildPlugin, 'runHook')
+        .mockReturnValueOnce(configHookReturnValue)
+        .mockReturnValueOnce(undefined);
+    });
 
-    expect(BuildPlugin.loadPlugin).toHaveBeenLastCalledWith(config.root, config.options);
-    expect(BuildPlugin.runHook).toHaveBeenLastCalledWith('pre', config);
+    it('should run the "config" plugin hook and return the new config', () => {
+      const webpackConfig = pluginBrowserBuilder.buildWebpackConfig(root, null, null, config.options);
+      expect(webpackConfig).toEqual(configHookReturnValue);
+    });
+
+    it('should run the "config" plugin hook and return the super config if method return undefined', () => {
+      const webpackConfig = pluginBrowserBuilder.buildWebpackConfig(root, null, null, config.options);
+      expect(webpackConfig.parent).toBeTruthy();
+    });
   });
 });
