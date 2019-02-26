@@ -46,6 +46,8 @@ jobs:
           path: ./build/test-results
       - codecov/upload:
           file: ./build/coverage/lcov.info
+      - codecov/upload:
+          file: ./build/test-results/jest/results.xml
 
   deploy:
     executor: build-executor
