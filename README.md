@@ -42,13 +42,13 @@ yarn add -D ngx-build-plugin
   Where:
   - `builder` support one of the following builders [[browser](#browser)|[server](#server)] *(soon dev-server and karma)*.
   - `plugin` (**required**) should contain a valid path for the javascript plugin file relative to the **workspace root**.
+
 - Then run the build architect like this:  
   `ng [architect-target]` or `ng run [project]:[architect-target]` 
 
 It's possible to change the plugin javascript file by using the `--plugin` switch:
 
 `ng [architect-target] --plugin other-path/ng-build.config.js`
-
 
 ## Builders
 
@@ -68,17 +68,96 @@ module.exports = {
   pre(builderConfig) {
     console.log('pre');
   },
+  
   config(webpackConfig) {
     console.log('config');
     return webpackConfig;
   },
+  
   post(builderConfig) {
     console.log('post');
   }
 }
 ```
 
-*PS: The plugin concept is based on a `ngx-build-plus` package approach created by * 
+*PS: The plugin concept is based on the [ngx-build-plus](https://www.npmjs.com/package/ngx-build-plus) package approach created by [@ManfredSteyer](https://twitter.com/ManfredSteyer)* 
+
+## Examples
+
+A few examples that show the `ng-build-plugin` usages:
+
+#### Change build progress plugin
+
+Use a progress bar plugin for webpack ([progress-bar-webpack-plugin](https://www.npmjs.com/package/progress-bar-webpack-plugin)).
+
+```javascript
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+
+module.exports = {
+  config(webpackConfig) {
+    webpackConfig.plugins.forEach((plugin, index) => {
+      if (plugin.constructor.name === 'ProgressPlugin') {
+        webpackConfig.plugins[index] = new ProgressBarPlugin();
+      }
+    });
+
+    return webpackConfig;
+  }
+}
+```
+
+To execute this plugin check the [usage](#usage) above.
+
+*Note: no webpack merge plugin used just plugin instance replace.*
+
+#### Use custom webpack merge strategy
+
+It's possible to use [webpack-merge](https://www.npmjs.com/package/webpack-merge) with different strategy based on your specific use case:
+
+```javascript
+const merge = require('webpack-merge');
+const webpack = require('webpack');
+
+module.exports = {
+  config(webpackConfig) {
+    const strategy = merge.strategy({
+      externals: 'append',
+      plugins: 'prepend'
+    });
+
+    return strategy (webpackConfig, {
+      externals: [/^@angular/],
+      plugins: [
+        new webpack.DefinePlugin({
+          VERSION: JSON.stringify('1.0.1')
+        })
+      ]
+    });
+  }
+};
+```
+
+## Changelog
+
+[GitHub Releases](https://github.com/gcirone/ngx-build-plugin/releases)
+
+## Contributing
+
+Thank you for contributions!
+
+#### Feature Implementing
+
+Please use GitHub Pull Requests.
+
+There are some scripts to help developments.
+
+- `yarn build` - Make *build/package* directory from src directory.
+- `yarn build:watc` - Watch for files changes and rebuild package directory.
+- `yarn build:clean` - Delete directories which are created by other commands.
+- `yarn test` - Run tests and collect coverage (*build/coverage*).
+- `yarn build` - Make build/package directory from src directory. test:watch` - Run tests  when each file was modified.
+- `yarn lint` - Run TSLint.
+- `yarn prettier` - Run Prettier.
 
 ## License
 
