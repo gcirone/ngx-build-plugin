@@ -137,6 +137,8 @@ module.exports = {
 };
 ```
 
+To execute this plugin check the [usage](#usage) above.
+
 ## Changelog
 
 [GitHub Releases](https://github.com/gcirone/ngx-build-plugin/releases)
@@ -152,10 +154,10 @@ Please use GitHub Pull Requests.
 There are some scripts to help developments.
 
 - `yarn build` - Make *build/package* directory from src directory.
-- `yarn build:watc` - Watch for files changes and rebuild package directory.
+- `yarn build:watch` - Watch for files changes and rebuild package directory.
 - `yarn build:clean` - Delete directories which are created by other commands.
-- `yarn test` - Run tests and collect coverage (*build/coverage*).
-- `yarn build` - Make build/package directory from src directory. test:watch` - Run tests  when each file was modified.
+- `yarn test` - Run tests and collect coverage (html report in *build/coverage*).
+- `yarn test:watch` - Run tests  when each file was modified.
 - `yarn lint` - Run TSLint.
 - `yarn prettier` - Run Prettier.
 

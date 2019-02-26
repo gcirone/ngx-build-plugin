@@ -40,7 +40,7 @@
     "release": "yarn version && cp package.json build/package && git push origin --tags"
   },
   "dependencies": {
-    "@schematics/angular": "7.2.4"
+
   },
   "peerDependencies": {
     "@angular-devkit/build-angular": ">= 0.10.0",
