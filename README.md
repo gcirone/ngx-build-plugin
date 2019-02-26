@@ -8,11 +8,29 @@
     <img src="https://img.shields.io/badge/tested_with-jest-99424f.svg" alt="Jest">
   </a>
   <a href="https://codecov.io/gh/gcirone/ngx-build-plugin">
-    <img src="https://codecov.io/gh/gcirone/ngx-build-plugin/branch/master/graph/badge.svg" />
+    <img src="https://codecov.io/gh/gcirone/ngx-build-plugin/branch/master/graph/badge.svg" alt="Codecov" />
   </a>
 </p>
 
-Extend Angular CLI build configuration
+Enhance Angular CLI's default build configuration by plug a custom one.
+
+This package gives low-level access to the default configuration without providing a webpack merge behavior. Feel free to add your specific use case without limitations.
+
+
+## Installation
+
+<sub>*In the commands below I'll use [yarn](https://yarnpkg.com) but you can use [npm](https://www.npmjs.com) instead.*</sub>
+
+
+```
+yarn add -D ngx-build-plugin
+```
+
+## Usage
+
+
+
+
 
 ## License
 
