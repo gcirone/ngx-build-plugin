@@ -2,7 +2,7 @@
 
 <p align="left">
   <a href="https://www.npmjs.com/package/ngx-build-plugin">
-    <img src="https://img.shields.io/npm/v/ngx-build-plugin.svg?style=flat-square" alt="CircleCI Build Status">
+    <img src="https://img.shields.io/npm/v/ngx-build-plugin.svg?style=flat-square" alt="Npm">
   </a>
   <a href="https://circleci.com/gh/gcirone/ngx-build-plugin">
     <img src="https://circleci.com/gh/gcirone/ngx-build-plugin.svg?style=shield" alt="CircleCI Build Status">

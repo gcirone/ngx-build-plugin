@@ -39,9 +39,7 @@
     "test:watch": "jest -c jest.config.js --watch",
     "release": "yarn version && cp package.json build/package && git push origin --tags"
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@angular-devkit/build-angular": ">= 0.10.0",
     "rxjs": ">= 6.0.0"
