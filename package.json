@@ -1,7 +1,7 @@
 {
   "name": "ngx-build-plugin",
   "version": "0.0.3",
-  "description": "Extend Angular CLI build configuration",
+  "description": "Enhance Angular CLI's default build configuration by plugging a custom one.",
   "main": "index.js",
   "types": "index.d.ts",
   "builders": "builders.json",
@@ -39,9 +39,7 @@
     "test:watch": "jest -c jest.config.js --watch",
     "release": "yarn version && cp package.json build/package && git push origin --tags"
   },
-  "dependencies": {
-    "@schematics/angular": "7.2.4"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@angular-devkit/build-angular": ">= 0.10.0",
     "rxjs": ">= 6.0.0"
