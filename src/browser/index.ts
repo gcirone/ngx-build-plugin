@@ -1,14 +1,14 @@
 import { BrowserBuilder } from '@angular-devkit/build-angular';
 import { Path, virtualFs } from '@angular-devkit/core';
 import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginBrowserBuilderSchema } from './schema';
+import { NormalizedPluginBrowserBuilderSchema, PluginBrowserBuilderSchema } from './schema';
 import { BuildPlugin } from '../build-plugin';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Stats } from 'fs';
 
 export class PluginBrowserBuilder extends BrowserBuilder {
-  run(builderConfig: BuilderConfiguration<NormalizedPluginBrowserBuilderSchema>): Observable<BuildEvent> {
+  run(builderConfig: BuilderConfiguration<PluginBrowserBuilderSchema>): Observable<BuildEvent> {
     BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
     BuildPlugin.runHook('pre', builderConfig);
 

@@ -2,6 +2,10 @@
   "title": "Webpack browser schema for Build Facade.",
   "description": "Browser target options",
   "properties": {
+    "plugin": {
+      "description": "Plugin to include. Plugin will be resolved to workspace root.",
+      "type": "string"
+    },
     "assets": {
       "type": "array",
       "description": "List of static application assets.",
@@ -9,10 +13,6 @@
       "items": {
         "$ref": "#/definitions/assetPattern"
       }
-    },
-    "plugin": {
-      "description": "Plugin to include. Plugin will be resolved to workspace root.",
-      "type": "string"
     },
     "main": {
       "type": "string",

@@ -12,8 +12,8 @@
       "description": "Build a server Angular application."
     },
     "dev-server": {
-      "class": "./src/dev-server",
-      "schema": "./src/dev-server/schema.json",
+      "class": "./dev-server",
+      "schema": "./dev-server/schema.json",
       "description": "Serve a browser app."
     }
   }

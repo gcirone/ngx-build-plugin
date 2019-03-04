@@ -233,8 +233,8 @@
   },
   "additionalProperties": false,
   "required": [
-    "outputPath",
     "plugin",
+    "outputPath",
     "main",
     "tsConfig"
   ],

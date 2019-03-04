@@ -1,14 +1,14 @@
 import { ServerBuilder } from '@angular-devkit/build-angular';
 import { Path, virtualFs } from '@angular-devkit/core';
 import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginServerBuilderSchema } from './schema';
+import { NormalizedPluginServerBuilderSchema, PluginServerBuilderSchema } from './schema';
 import { BuildPlugin } from '../build-plugin';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Stats } from 'fs';
 
 export class PluginServerBuilder extends ServerBuilder {
-  run(builderConfig: BuilderConfiguration<NormalizedPluginServerBuilderSchema>): Observable<BuildEvent> {
+  run(builderConfig: BuilderConfiguration<PluginServerBuilderSchema>): Observable<BuildEvent> {
     BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
     BuildPlugin.runHook('pre', builderConfig);
 
