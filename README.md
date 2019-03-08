@@ -17,7 +17,7 @@
 
 Enhance Angular CLI's default build configuration by plugging a custom one.
 
-This package gives low-level access to the default configuration without providing a webpack merge behavior. Feel free to add your specific use case without limitations.
+This package gives **low-level** access to the default configuration without providing a webpack merge behavior. Feel free to add your specific use case without limitations.
 
 
 ## Installation
@@ -43,7 +43,7 @@ yarn add -D ngx-build-plugin
   }
   ```
   Where:
-  - `builder` support one of the following builders [[browser](#browser)|[server](#server)] *(soon dev-server and karma)*.
+  - `builder` support one of the following builders [[browser](#browser)|[server](#server)|[dev-server](#dev-server)] *(soon karma)*.
   - `plugin` (**required**) should contain a valid path for the javascript plugin file relative to the **workspace root**.
 
 - Then run the build architect like this:  
@@ -57,6 +57,7 @@ It's possible to change the plugin javascript file by using the `--plugin` switc
 
  - [ngx-build-plugin:browser](#browser)
  - [ngx-build-plugin:server](#server)
+ - [ngx-build-plugin:dev-server](#dev-server)
  
 
 ## Plugin
@@ -71,12 +72,10 @@ module.exports = {
   pre(builderConfig) {
     console.log('pre');
   },
-  
   config(webpackConfig) {
     console.log('config');
     return webpackConfig;
   },
-  
   post(builderConfig) {
     console.log('post');
   }

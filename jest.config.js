@@ -15,7 +15,7 @@ module.exports = {
 
   collectCoverage: true,
   coverageReporters: ['lcovonly', 'html', 'text-summary'],
-  coveragePathIgnorePatterns: ['/node_modules/', '/build/'],
+  coveragePathIgnorePatterns: ['/node_modules/', '/build/', 'json'],
   coverageDirectory: '<rootDir>/build/coverage',
 
   reporters: ['default', ['jest-junit', jestJunitConfig]],

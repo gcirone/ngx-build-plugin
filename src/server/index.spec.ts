@@ -36,12 +36,12 @@ describe('PluginServerBuilder Test', () => {
     });
 
     it('should run the "pre" plugin hook before the super run is called', () => {
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(1, 'pre', config);
+      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(1, BuildPlugin.PRE_HOOK, config);
     });
 
     it('should run the "post" plugin hook after the super run is called', () => {
       expect(BuildPlugin.runHook).toHaveBeenCalledTimes(2);
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(2, 'post', config);
+      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(2, BuildPlugin.POST_HOOK, config);
     });
   });
 

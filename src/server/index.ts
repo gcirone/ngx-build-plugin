@@ -1,18 +1,18 @@
 import { ServerBuilder } from '@angular-devkit/build-angular';
 import { Path, virtualFs } from '@angular-devkit/core';
 import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginServerBuilderSchema } from './schema';
+import { NormalizedPluginServerBuilderSchema, PluginServerBuilderSchema } from './schema';
 import { BuildPlugin } from '../build-plugin';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Stats } from 'fs';
 
 export class PluginServerBuilder extends ServerBuilder {
-  run(builderConfig: BuilderConfiguration<NormalizedPluginServerBuilderSchema>): Observable<BuildEvent> {
+  run(builderConfig: BuilderConfiguration<PluginServerBuilderSchema>): Observable<BuildEvent> {
     BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
-    BuildPlugin.runHook('pre', builderConfig);
+    BuildPlugin.runHook(BuildPlugin.PRE_HOOK, builderConfig);
 
-    return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook('post', builderConfig)));
+    return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook(BuildPlugin.POST_HOOK, builderConfig)));
   }
 
   buildWebpackConfig(
@@ -22,7 +22,7 @@ export class PluginServerBuilder extends ServerBuilder {
     options: NormalizedPluginServerBuilderSchema
   ) {
     const webpackConfig = super.buildWebpackConfig(root, projectRoot, host, options);
-    return BuildPlugin.runHook('config', webpackConfig) || webpackConfig;
+    return BuildPlugin.runHook(BuildPlugin.CONFIG_HOOK, webpackConfig) || webpackConfig;
   }
 }
 

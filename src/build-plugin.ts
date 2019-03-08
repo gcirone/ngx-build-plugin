@@ -3,6 +3,10 @@ import { Plugin, PluginHook, PluginBuilderSchema } from './schema';
 import { resolve } from 'path';
 
 export class BuildPlugin {
+  static readonly PRE_HOOK = 'pre';
+  static readonly POST_HOOK = 'post';
+  static readonly CONFIG_HOOK = 'config';
+
   private static plugin: Plugin;
 
   static loadPlugin(root: Path, options: PluginBuilderSchema) {
