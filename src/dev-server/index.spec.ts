@@ -14,7 +14,7 @@ describe('PluginDevServerBuilder Test', () => {
   const browserPlugin = 'folder/browser.plugin.js';
   const context: any = {
     workspace: { root },
-    architect: { getBuilderConfiguration: () => {} },
+    architect: { getBuilderConfiguration: () => {} }
   };
   const devServerConfig: any = {
     root,
