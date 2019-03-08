@@ -188,7 +188,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "plugin",
     "browserTarget"
   ]
 }

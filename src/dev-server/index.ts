@@ -1,7 +1,7 @@
 import { DevServerBuilder } from '@angular-devkit/build-angular';
 import { Path, virtualFs } from '@angular-devkit/core';
 import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginBrowserBuilderSchema } from '../browser/schema';
+import { NormalizedPluginBrowserBuilderSchema, PluginBrowserBuilderSchema } from '../browser/schema';
 import { PluginDevServerBuilderOptions } from './schema';
 import { BuildPlugin } from '../build-plugin';
 import { PluginBrowserBuilder } from '../browser';
@@ -11,6 +11,14 @@ import { Stats } from 'fs';
 
 export class PluginDevServerBuilder extends DevServerBuilder {
   run(builderConfig: BuilderConfiguration<PluginDevServerBuilderOptions>): Observable<BuildEvent> {
+    const architect = this.context.architect;
+    const [project, target, configuration] = builderConfig.options.browserTarget.split(':');
+
+    const browserTargetSpec = { project, target, configuration };
+    const browserBuilderConfig = architect.getBuilderConfiguration<PluginBrowserBuilderSchema>(browserTargetSpec);
+
+    builderConfig.options.plugin = builderConfig.options.plugin || browserBuilderConfig.options.plugin;
+
     BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
     BuildPlugin.runHook(BuildPlugin.PRE_HOOK, builderConfig);
 
