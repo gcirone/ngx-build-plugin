@@ -1,5 +1,5 @@
 const jestJunitConfig = {
-  outputDirectory: '<rootDir>/build/test-results/jest',
+  outputDirectory: '<rootDir>/dist/test-results/jest',
   outputName: 'results.xml'
 };
 
@@ -11,13 +11,13 @@ module.exports = {
   roots: ['<rootDir>/src/'],
 
   testMatch: ['**/*+(spec|test).+(ts|js)?(x)'],
-  testPathIgnorePatterns: ['/node_modules/', '/build/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 
   collectCoverage: true,
   coverageReporters: ['lcovonly', 'html', 'text-summary'],
-  coveragePathIgnorePatterns: ['/node_modules/', '/build/', 'json'],
-  coverageDirectory: '<rootDir>/build/coverage',
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', 'json'],
+  coverageDirectory: '<rootDir>/dist/coverage',
 
   reporters: ['default', ['jest-junit', jestJunitConfig]],
-  cacheDirectory: '<rootDir>/build/.jest-cache'
+  cacheDirectory: '<rootDir>/dist/.jest-cache'
 };

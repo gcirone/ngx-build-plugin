@@ -1,39 +1,31 @@
-import { DevServerBuilder } from '@angular-devkit/build-angular';
-import { Path, virtualFs } from '@angular-devkit/core';
-import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginBrowserBuilderSchema, PluginBrowserBuilderSchema } from '../browser/schema';
-import { PluginDevServerBuilderOptions } from './schema';
-import { BuildPlugin } from '../build-plugin';
-import { PluginBrowserBuilder } from '../browser';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Stats } from 'fs';
+import { DevServerBuilderOutput, executeDevServerBuilder, ExecutionTransformer } from '@angular-devkit/build-angular';
+import { BuilderContext, createBuilder, targetFromTargetString } from '@angular-devkit/architect';
+import { PluginDevServerBuilderSchema } from './schema';
+import { loadPlugin, executeHook, PluginHook } from '../build-plugin';
+import { from, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import * as webpack from 'webpack';
 
-export class PluginDevServerBuilder extends DevServerBuilder {
-  run(builderConfig: BuilderConfiguration<PluginDevServerBuilderOptions>): Observable<BuildEvent> {
-    const architect = this.context.architect;
-    const [project, target, configuration] = builderConfig.options.browserTarget.split(':');
+export function serveWebpackBrowserPlugin(
+  options: PluginDevServerBuilderSchema,
+  context: BuilderContext
+): Observable<DevServerBuilderOutput> {
+  const browserTarget = targetFromTargetString(options.browserTarget);
 
-    const browserTargetSpec = { project, target, configuration };
-    const browserBuilderConfig = architect.getBuilderConfiguration<PluginBrowserBuilderSchema>(browserTargetSpec);
+  return from(context.getTargetOptions(browserTarget)).pipe(
+    switchMap(browserOptions => {
+      options.plugin = options.plugin || <string>browserOptions.plugin;
 
-    builderConfig.options.plugin = builderConfig.options.plugin || browserBuilderConfig.options.plugin;
+      loadPlugin(context.workspaceRoot, options);
+      executeHook(PluginHook.PRE, context);
 
-    BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
-    BuildPlugin.runHook(BuildPlugin.PRE_HOOK, builderConfig);
+      const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = config =>
+        executeHook(PluginHook.CONFIG, config);
 
-    return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook(BuildPlugin.POST_HOOK, builderConfig)));
-  }
-
-  buildWebpackConfig(
-    root: Path,
-    projectRoot: Path,
-    host: virtualFs.Host<Stats>,
-    options: NormalizedPluginBrowserBuilderSchema
-  ) {
-    const browserBuilder = new PluginBrowserBuilder(this.context);
-    return browserBuilder.buildWebpackConfig(root, projectRoot, host, options);
-  }
+      return executeDevServerBuilder(options, context, { webpackConfiguration });
+    }),
+    tap(() => executeHook(PluginHook.POST, context))
+  );
 }
 
-export default PluginDevServerBuilder;
+export default createBuilder<PluginDevServerBuilderSchema>(serveWebpackBrowserPlugin);

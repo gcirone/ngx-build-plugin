@@ -1,29 +1,24 @@
-import { BrowserBuilder } from '@angular-devkit/build-angular';
-import { Path, virtualFs } from '@angular-devkit/core';
-import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
-import { NormalizedPluginBrowserBuilderSchema, PluginBrowserBuilderSchema } from './schema';
-import { BuildPlugin } from '../build-plugin';
+import { BrowserBuilderOutput, executeBrowserBuilder, ExecutionTransformer } from '@angular-devkit/build-angular';
+import { BuilderContext, createBuilder } from '@angular-devkit/architect';
+import { PluginBrowserBuilderSchema } from './schema';
+import { loadPlugin, executeHook, PluginHook } from '../build-plugin';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Stats } from 'fs';
+import * as webpack from 'webpack';
 
-export class PluginBrowserBuilder extends BrowserBuilder {
-  run(builderConfig: BuilderConfiguration<PluginBrowserBuilderSchema>): Observable<BuildEvent> {
-    BuildPlugin.loadPlugin(this.context.workspace.root, builderConfig.options);
-    BuildPlugin.runHook(BuildPlugin.PRE_HOOK, builderConfig);
+export function buildWebpackBrowserPlugin(
+  options: PluginBrowserBuilderSchema,
+  context: BuilderContext
+): Observable<BrowserBuilderOutput> | any {
+  loadPlugin(context.workspaceRoot, options);
+  executeHook(PluginHook.PRE, context);
 
-    return super.run(builderConfig).pipe(tap(() => BuildPlugin.runHook(BuildPlugin.POST_HOOK, builderConfig)));
-  }
+  const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = config =>
+    executeHook(PluginHook.CONFIG, config);
 
-  buildWebpackConfig(
-    root: Path,
-    projectRoot: Path,
-    host: virtualFs.Host<Stats>,
-    options: NormalizedPluginBrowserBuilderSchema
-  ) {
-    const webpackConfig = super.buildWebpackConfig(root, projectRoot, host, options);
-    return BuildPlugin.runHook(BuildPlugin.CONFIG_HOOK, webpackConfig) || webpackConfig;
-  }
+  return executeBrowserBuilder(options, context, { webpackConfiguration }).pipe(
+    tap(() => executeHook(PluginHook.POST, context))
+  );
 }
 
-export default PluginBrowserBuilder;
+export default createBuilder<PluginBrowserBuilderSchema>(buildWebpackBrowserPlugin);

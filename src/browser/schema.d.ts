@@ -1,5 +1,5 @@
-import { BrowserBuilderSchema, NormalizedBrowserBuilderSchema } from '@angular-devkit/build-angular';
+import { Schema as BrowserBuilderSchema } from '@angular-devkit/build-angular/src/browser/schema';
+import { JsonObject } from '@angular-devkit/core';
 import { PluginBuilderSchema } from '../schema';
 
-export interface PluginBrowserBuilderSchema extends BrowserBuilderSchema, PluginBuilderSchema {}
-export interface NormalizedPluginBrowserBuilderSchema extends NormalizedBrowserBuilderSchema, PluginBuilderSchema {}
+export type PluginBrowserBuilderSchema = JsonObject & BrowserBuilderSchema & PluginBuilderSchema;

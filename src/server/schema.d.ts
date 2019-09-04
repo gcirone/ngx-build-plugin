@@ -1,8 +1,5 @@
-import {
-  BuildWebpackServerSchema,
-  NormalizedServerBuilderServerSchema
-} from '@angular-devkit/build-angular/src/server/schema';
+import { Schema as ServerBuilderSchema } from '@angular-devkit/build-angular/src/server/schema';
+import { JsonObject } from '@angular-devkit/core';
 import { PluginBuilderSchema } from '../schema';
 
-export interface PluginServerBuilderSchema extends BuildWebpackServerSchema, PluginBuilderSchema {}
-export interface NormalizedPluginServerBuilderSchema extends NormalizedServerBuilderServerSchema, PluginBuilderSchema {}
+export type PluginServerBuilderSchema = JsonObject & ServerBuilderSchema & PluginBuilderSchema;

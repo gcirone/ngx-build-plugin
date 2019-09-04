@@ -1,24 +1,23 @@
-import { getSystemPath, Path } from '@angular-devkit/core';
-import { Plugin, PluginHook, PluginBuilderSchema } from './schema';
+import { Plugin, PluginBuilderSchema } from './schema';
 import { resolve } from 'path';
 
-export class BuildPlugin {
-  static readonly PRE_HOOK = 'pre';
-  static readonly POST_HOOK = 'post';
-  static readonly CONFIG_HOOK = 'config';
+export let plugin: Plugin;
 
-  private static plugin: Plugin;
+export enum PluginHook {
+  PRE = 'pre',
+  CONFIG = 'config',
+  POST = 'post'
+}
 
-  static loadPlugin(root: Path, options: PluginBuilderSchema) {
-    if (options.plugin) {
-      const pluginPath = resolve(getSystemPath(root), options.plugin);
-      BuildPlugin.plugin = require(pluginPath);
-    }
+export function loadPlugin(root: string, options: PluginBuilderSchema) {
+  if (options.plugin && !plugin) {
+    const pluginPath = resolve(root, options.plugin);
+    plugin = require(pluginPath);
   }
+}
 
-  static runHook(hook: PluginHook, data: any) {
-    if (BuildPlugin.plugin && BuildPlugin.plugin[hook]) {
-      return BuildPlugin.plugin[hook](data);
-    }
+export function executeHook(hook: PluginHook, data: any) {
+  if (plugin && plugin[hook]) {
+    return plugin[hook](data);
   }
 }

@@ -1,83 +1,62 @@
-import { DevServerBuilder } from '@angular-devkit/build-angular';
-import { BuildPlugin } from '../build-plugin';
-import { PluginBrowserBuilder } from '../browser';
-import { PluginDevServerBuilder } from './';
+import { executeDevServerBuilder } from '@angular-devkit/build-angular';
+import { createBuilder, targetFromTargetString } from '@angular-devkit/architect';
+import { loadPlugin, executeHook, PluginHook } from '../build-plugin';
+import { default as serveWebpackBrowserPlugin } from './';
 import { of } from 'rxjs';
 
+jest.mock('@angular-devkit/build-angular');
+jest.mock('@angular-devkit/architect', () => ({
+  createBuilder: jest.fn(fn => fn),
+  targetFromTargetString: jest.fn()
+}));
 jest.mock('../build-plugin');
 
-describe('PluginDevServerBuilder Test', () => {
-  let pluginDevServerBuilder: PluginDevServerBuilder;
-
-  const root: any = 'root';
-  const devServerPlugin = 'folder/dev-server.plugin.js';
-  const browserPlugin = 'folder/browser.plugin.js';
-  const context: any = {
-    workspace: { root },
-    architect: { getBuilderConfiguration: () => {} }
-  };
-  const devServerConfig: any = {
-    root,
-    projectType: 'application',
-    builder: 'ngx-build-plugin:dev-server',
-    options: { plugin: devServerPlugin, browserTarget: 'site:browser' }
-  };
-  const browserConfig: any = {
-    options: { plugin: browserPlugin }
-  };
+describe('ServeWebpackBrowserPlugin Test', () => {
+  const options = { plugin: 'folder/file.plugin.js' };
+  const context = { workspaceRoot: 'root', getTargetOptions: jest.fn() };
+  const buildConfig = { mode: 'test' };
+  const hookedConfig = { hook: true };
+  let webpackConfigurationTransform;
 
   beforeEach(() => {
-    jest.spyOn(DevServerBuilder.prototype, 'run').mockReturnValue(of({ success: true }));
-    jest.spyOn(PluginBrowserBuilder.prototype, 'buildWebpackConfig').mockReturnValue({ parent: true });
-    jest.spyOn(context.architect, 'getBuilderConfiguration').mockReturnValue(browserConfig);
-    pluginDevServerBuilder = new PluginDevServerBuilder(context);
+    (targetFromTargetString as jest.Mock).mockReturnValue({ target: 'test' });
+    (context.getTargetOptions as jest.Mock).mockResolvedValue({});
+    (executeHook as jest.Mock).mockReturnValue(hookedConfig);
+    (executeDevServerBuilder as jest.Mock).mockImplementation((opts, ctx, transforms) => {
+      webpackConfigurationTransform = transforms.webpackConfiguration;
+      return of({ success: true });
+    });
   });
 
-  describe('#run', () => {
-    beforeEach(() => {
-      jest.spyOn(BuildPlugin, 'loadPlugin').mockReset();
-      jest.spyOn(BuildPlugin, 'runHook').mockReset();
-      pluginDevServerBuilder.run(devServerConfig).subscribe();
-    });
+  it('should implement the builder', () => {
+    expect(createBuilder).toHaveBeenCalledWith(jasmine.any(Function));
+  });
+
+  describe('when the builder is scheduled', () => {
+    beforeAll(() => (serveWebpackBrowserPlugin as any)(options, context).subscribe());
 
     it('should load the plugin', () => {
-      expect(BuildPlugin.loadPlugin).toHaveBeenLastCalledWith(devServerConfig.root, devServerConfig.options);
-      expect((BuildPlugin.loadPlugin as any).mock.calls[0][1].plugin).toEqual(devServerPlugin);
+      expect(loadPlugin).toHaveBeenCalledWith(context.workspaceRoot, options);
     });
 
-    it('should run the "pre" plugin hook before the super run is called', () => {
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(1, BuildPlugin.PRE_HOOK, devServerConfig);
+    it('should run the "pre" hook plugin handler', () => {
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.PRE, context);
     });
 
-    it('should run the "post" plugin hook after the super run is called', () => {
-      expect(BuildPlugin.runHook).toHaveBeenCalledTimes(2);
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(2, BuildPlugin.POST_HOOK, devServerConfig);
-    });
-
-    describe('when plugin is not defined in the dev server options', () => {
-      beforeEach(() => {
-        delete devServerConfig.options.plugin;
-        pluginDevServerBuilder.run(devServerConfig).subscribe();
-      });
-
-      it('should load the browser plugin option configuration', () => {
-        expect((BuildPlugin.loadPlugin as any).mock.calls[0][1].plugin).toEqual(browserPlugin);
+    it('should execute the browser builder', () => {
+      expect(executeDevServerBuilder).toHaveBeenCalledWith(options, context, {
+        webpackConfiguration: jasmine.any(Function)
       });
     });
-  });
 
-  describe('#buildWebpackConfig', () => {
-    const configHookReturnValue = { hook: true };
-    beforeEach(() => {
-      jest
-        .spyOn(BuildPlugin, 'runHook')
-        .mockReturnValueOnce(configHookReturnValue)
-        .mockReturnValueOnce(undefined);
+    it('should run the "config" plugin hook and return the new config', () => {
+      const expectedConfig = webpackConfigurationTransform(buildConfig);
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.CONFIG, buildConfig);
+      expect(expectedConfig).toEqual(hookedConfig);
     });
 
-    it('should run the "browser" plugin builder and return the config', () => {
-      const webpackConfig = pluginDevServerBuilder.buildWebpackConfig(root, null, null, devServerConfig.options);
-      expect(webpackConfig.parent).toBeTruthy();
+    it('should run the "post" hook plugin handler', () => {
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.POST, context);
     });
   });
 });

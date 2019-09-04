@@ -2,9 +2,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "src",
-    "outDir": "build/package",
-    "sourceMap": true,
-    "inlineSources": true,
+    "outDir": "dist/package/src",
+    "sourceMap": false,
+    "inlineSources": false,
     "declaration": true,
     "target": "es6",
     "module": "commonjs",
@@ -19,7 +19,8 @@
     ],
     "types": [
       "node",
-      "jest"
+      "jest",
+      "webpack"
     ],
     "lib": [
       "es2018",
@@ -28,6 +29,7 @@
   },
   "exclude": [
     "node_modules",
-    "build"
+    "dist",
+    "**/*.spec.ts"
   ]
 }

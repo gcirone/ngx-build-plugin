@@ -41,13 +41,13 @@ jobs:
           name: Test Package
           command: yarn test
       - store_test_results:
-          path: ./build/test-results
+          path: ./dist/test-results
       - store_artifacts:
-          path: ./build/test-results
+          path: ./dist/test-results
       - codecov/upload:
-          file: ./build/coverage/lcov.info
+          file: ./dist/coverage/lcov.info
       - codecov/upload:
-          file: ./build/test-results/jest/results.xml
+          file: ./dist/test-results/jest/results.xml
 
   deploy:
     executor: build-executor
@@ -59,7 +59,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish Package
-          command: npm publish ./build/package --access public
+          command: npm publish ./dist/package --access public
 
 workflows:
   version: 2

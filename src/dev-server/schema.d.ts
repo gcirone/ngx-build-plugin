@@ -1,4 +1,5 @@
-import { DevServerBuilderOptions } from '@angular-devkit/build-angular';
+import { Schema as DevServerBuilderSchema } from '@angular-devkit/build-angular/src/dev-server/schema';
+import { JsonObject } from '@angular-devkit/core';
 import { PluginBuilderSchema } from '../schema';
 
-export interface PluginDevServerBuilderOptions extends DevServerBuilderOptions, PluginBuilderSchema {}
+export type PluginDevServerBuilderSchema = JsonObject & DevServerBuilderSchema & PluginBuilderSchema;

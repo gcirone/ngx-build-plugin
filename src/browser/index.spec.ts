@@ -1,67 +1,57 @@
-import { BrowserBuilder } from '@angular-devkit/build-angular';
-import { BuildPlugin } from '../build-plugin';
-import { PluginBrowserBuilder } from './';
+import { executeBrowserBuilder } from '@angular-devkit/build-angular';
+import { createBuilder } from '@angular-devkit/architect';
+import { loadPlugin, executeHook, PluginHook } from '../build-plugin';
+import { default as buildWebpackBrowserPlugin } from './';
 import { of } from 'rxjs';
 
+jest.mock('@angular-devkit/build-angular');
+jest.mock('@angular-devkit/architect', () => ({ createBuilder: jest.fn(fn => fn) }));
 jest.mock('../build-plugin');
 
-describe('PluginBrowserBuilder Test', () => {
-  let pluginBrowserBuilder: PluginBrowserBuilder;
-
-  const root: any = 'root';
-  const plugin = 'folder/file.plugin.js';
-  const context: any = { workspace: { root } };
-  const config: any = {
-    root,
-    projectType: 'application',
-    builder: 'ngx-build-plugin:browser',
-    options: { plugin }
-  };
+describe('BuildWebpackBrowserPlugin Test', () => {
+  const options = { plugin: 'folder/file.plugin.js' };
+  const context = { workspaceRoot: 'root' };
+  const buildConfig = { mode: 'test' };
+  const hookedConfig = { hook: true };
+  let webpackConfigurationTransform;
 
   beforeEach(() => {
-    jest.spyOn(BrowserBuilder.prototype, 'run').mockReturnValue(of({ success: true }));
-    jest.spyOn(BrowserBuilder.prototype, 'buildWebpackConfig').mockReturnValue({ parent: true });
-    pluginBrowserBuilder = new PluginBrowserBuilder(context);
+    (executeHook as jest.Mock).mockReturnValue(hookedConfig);
+    (executeBrowserBuilder as jest.Mock).mockImplementation((opts, ctx, transforms) => {
+      webpackConfigurationTransform = transforms.webpackConfiguration;
+      return of({ success: true });
+    });
   });
 
-  describe('#run', () => {
-    beforeEach(() => {
-      jest.spyOn(BuildPlugin, 'loadPlugin').mockReset();
-      jest.spyOn(BuildPlugin, 'runHook').mockReset();
-      pluginBrowserBuilder.run(config).subscribe();
-    });
+  it('should implement the builder', () => {
+    expect(createBuilder).toHaveBeenCalledWith(jasmine.any(Function));
+  });
+
+  describe('when the builder is scheduled', () => {
+    beforeAll(() => (buildWebpackBrowserPlugin as any)(options, context).subscribe());
 
     it('should load the plugin', () => {
-      expect(BuildPlugin.loadPlugin).toHaveBeenLastCalledWith(config.root, config.options);
+      expect(loadPlugin).toHaveBeenCalledWith(context.workspaceRoot, options);
     });
 
-    it('should run the "pre" plugin hook before the super run is called', () => {
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(1, BuildPlugin.PRE_HOOK, config);
+    it('should run the "pre" hook plugin handler', () => {
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.PRE, context);
     });
 
-    it('should run the "post" plugin hook after the super run is called', () => {
-      expect(BuildPlugin.runHook).toHaveBeenCalledTimes(2);
-      expect(BuildPlugin.runHook).toHaveBeenNthCalledWith(2, BuildPlugin.POST_HOOK, config);
-    });
-  });
-
-  describe('#buildWebpackConfig', () => {
-    const configHookReturnValue = { hook: true };
-    beforeEach(() => {
-      jest
-        .spyOn(BuildPlugin, 'runHook')
-        .mockReturnValueOnce(configHookReturnValue)
-        .mockReturnValueOnce(undefined);
+    it('should execute the browser builder', () => {
+      expect(executeBrowserBuilder).toHaveBeenCalledWith(options, context, {
+        webpackConfiguration: jasmine.any(Function)
+      });
     });
 
     it('should run the "config" plugin hook and return the new config', () => {
-      const webpackConfig = pluginBrowserBuilder.buildWebpackConfig(root, null, null, config.options);
-      expect(webpackConfig).toEqual(configHookReturnValue);
+      const expectedConfig = webpackConfigurationTransform(buildConfig);
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.CONFIG, buildConfig);
+      expect(expectedConfig).toEqual(hookedConfig);
     });
 
-    it('should run the "config" plugin hook and return the super config if method return undefined', () => {
-      const webpackConfig = pluginBrowserBuilder.buildWebpackConfig(root, null, null, config.options);
-      expect(webpackConfig.parent).toBeTruthy();
+    it('should run the "post" hook plugin handler', () => {
+      expect(executeHook).toHaveBeenCalledWith(PluginHook.POST, context);
     });
   });
 });

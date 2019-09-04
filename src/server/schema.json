@@ -2,9 +2,10 @@
   "$schema": "http://json-schema.org/schema",
   "id": "BuildAngularWebpackServerSchema",
   "title": "Universal Target",
+  "type": "object",
   "properties": {
     "plugin": {
-      "description": "Plugin to include. Plugin will be resolved to workspace root.",
+      "description": "The full path for the build plugin, relative to the current workspace.",
       "type": "string"
     },
     "main": {
@@ -33,6 +34,7 @@
     },
     "optimization": {
       "description": "Enables optimization of the build output.",
+      "x-user-analytics": 16,
       "oneOf": [
         {
           "type": "object",
@@ -171,7 +173,7 @@
     },
     "deleteOutputPath": {
       "type": "boolean",
-      "description": "delete-output-path",
+      "description": "Delete the output path before building.",
       "default": true
     },
     "preserveSymlinks": {
@@ -205,7 +207,7 @@
     },
     "statsJson": {
       "type": "boolean",
-      "description": "Generates a 'stats.json' file which can be analyzed using tools such as: 'webpack-bundle-analyzer' or https://webpack.github.io/analyse.",
+      "description": "Generates a 'stats.json' file which can be analyzed using tools such as 'webpack-bundle-analyzer'.",
       "default": false
     },
     "forkTypeChecker": {
@@ -233,7 +235,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "plugin",
     "outputPath",
     "main",
     "tsConfig"
