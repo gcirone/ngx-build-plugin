@@ -4,7 +4,7 @@ executors:
   build-executor:
     working_directory: ~/ngx-build-plugin
     docker:
-      - image: circleci/node:8.15.0
+      - image: circleci/node:10.16.0
 
 orbs:
   codecov: codecov/codecov@1.0.4
