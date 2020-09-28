@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 
 jest.mock('@angular-devkit/build-angular');
 jest.mock('@angular-devkit/architect', () => ({
-  createBuilder: jest.fn(fn => fn),
+  createBuilder: jest.fn((fn) => fn),
   targetFromTargetString: jest.fn()
 }));
 jest.mock('../build-plugin');

@@ -13,13 +13,13 @@ export function serveWebpackBrowserPlugin(
   const browserTarget = targetFromTargetString(options.browserTarget);
 
   return from(context.getTargetOptions(browserTarget)).pipe(
-    switchMap(browserOptions => {
+    switchMap((browserOptions) => {
       options.plugin = options.plugin || <string>browserOptions.plugin;
 
       loadPlugin(context.workspaceRoot, options);
       executeHook(PluginHook.PRE, context);
 
-      const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = config =>
+      const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = (config) =>
         executeHook(PluginHook.CONFIG, config);
 
       return executeDevServerBuilder(options, context, { webpackConfiguration });

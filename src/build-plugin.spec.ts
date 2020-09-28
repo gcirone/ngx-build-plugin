@@ -1,7 +1,7 @@
 import { executeHook, loadPlugin, plugin, PluginHook } from './build-plugin';
 import * as path from 'path';
 
-jest.mock('root/folder/file.plugin.js', () => ({ pre: jest.fn(value => value) }), { virtual: true });
+jest.mock('root/folder/file.plugin.js', () => ({ pre: jest.fn((value) => value) }), { virtual: true });
 jest.mock('path');
 
 describe('BuildPlugin Test', () => {

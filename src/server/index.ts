@@ -13,7 +13,7 @@ export function buildWebpackServerPlugin(
   loadPlugin(context.workspaceRoot, options);
   executeHook(PluginHook.PRE, context);
 
-  const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = config =>
+  const webpackConfiguration: ExecutionTransformer<webpack.Configuration> = (config) =>
     executeHook(PluginHook.CONFIG, config);
 
   return executeServerBuilder(options, context, { webpackConfiguration }).pipe(

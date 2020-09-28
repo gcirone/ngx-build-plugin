@@ -5,7 +5,7 @@ import { default as buildWebpackServerPlugin } from './';
 import { of } from 'rxjs';
 
 jest.mock('@angular-devkit/build-angular');
-jest.mock('@angular-devkit/architect', () => ({ createBuilder: jest.fn(fn => fn) }));
+jest.mock('@angular-devkit/architect', () => ({ createBuilder: jest.fn((fn) => fn) }));
 jest.mock('../build-plugin');
 
 describe('BuildWebpackServerPlugin Test', () => {

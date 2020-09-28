@@ -43,7 +43,7 @@ yarn add -D ngx-build-plugin
   }
   ```
   Where:
-  - `builder` support one of the following builders [[browser](#browser)|[server](#server)|[dev-server](#dev-server)] *(soon karma)*.
+  - `builder` support one of the following builders [[browser](#browser)|[server](#server)|[dev-server](#dev-server)].
   - `plugin` (**required**) should contain a valid path for the javascript plugin file relative to the **workspace root**.
 
 - Then run the build architect like this:  

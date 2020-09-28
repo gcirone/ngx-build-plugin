@@ -11,7 +11,7 @@
     "browserTarget": {
       "type": "string",
       "description": "Target to serve.",
-      "pattern": ".+:.+(:.+)?"
+      "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
     },
     "port": {
       "type": "number",
@@ -58,6 +58,14 @@
     "publicHost": {
       "type": "string",
       "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies."
+    },
+    "allowedHosts": {
+      "type": "array",
+      "description": "List of hosts that are allowed to access the dev server.",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
     },
     "servePath": {
       "type": "string",
@@ -151,16 +159,6 @@
           "type": "boolean"
         }
       ]
-    },
-    "vendorSourceMap": {
-      "type": "boolean",
-      "description": "Resolve vendor packages sourcemaps.",
-      "x-deprecated": true
-    },
-    "evalSourceMap": {
-      "type": "boolean",
-      "description": "Output in-file eval sourcemaps.",
-      "x-deprecated": true
     },
     "vendorChunk": {
       "type": "boolean",
